@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Резиденция Деда Мороза</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Lobster&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-red: #ff6b6b;
+            --green: #4ecdc4;
+            --gold: #ffe66d;
+            --snow-white: #ffffff;
+            --text-color: #2f3542;
+            --card-shadow: 0 8px 20px rgba(137, 196, 244, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* КУРСОРЫ */
+        html { cursor: url('https://cur.cursors-4u.net/food/foo-6/foo550.cur'), auto !important; }
+        button, .nav-item, input, .target, a, .card, .memory-card, .tictac-cell { cursor: url('https://cur.cursors-4u.net/holidays/hol-4/hol307.cur'), pointer !important; }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #a1c4fd 0%, #c2e9fb 100%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            overflow-x: hidden;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        /* ГИРЛЯНДА */
+        .garland {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            z-index: 90;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-around;
+        }
+        .light {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            margin-top: -5px;
+            animation: glow 1.5s infinite alternate;
+            box-shadow: 0 2px 10px rgba(255,255,255,0.5);
+        }
+        .light:nth-child(odd) { background: #ff9ff3; animation-delay: 0.5s; }
+        .light:nth-child(even) { background: #feca57; animation-delay: 1s; }
+        .light:nth-child(3n) { background: #54a0ff; animation-delay: 0s; }
+        @keyframes glow { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* HEADER */
+        header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+        header h1 { margin: 0; font-family: 'Lobster', cursive; font-size: 2rem; color: var(--primary-red); text-shadow: 2px 2px 0px #fff; }
+
+        /* СНЕГ */
+        .snowflake {
+            position: fixed;
+            top: -20px;
+            color: #fff;
+            font-size: 1.5em;
+            text-shadow: 0 0 3px rgba(0, 168, 255, 0.5);
+            animation: fall linear infinite;
+            z-index: 999;
+            pointer-events: none;
+        }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
+        /* НАВИГАЦИЯ */
+        .nav-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(116, 185, 255, 0.4);
+            z-index: 1000;
+        }
+        .nav-item { text-align: center; font-size: 0.75rem; color: #a4b0be; width: 20%; transition: 0.3s; }
+        .nav-item.active { color: var(--primary-red); font-weight: bold; transform: translateY(-5px) scale(1.1); }
+        .nav-icon { font-size: 1.6rem; display: block; margin-bottom: 3px; }
+
+        /* КАРТОЧКИ */
+        .section { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: slideUp 0.5s ease; }
+        .section.active { display: block; }
+        @keyframes slideUp { from {opacity: 0; transform: translateY(30px);} to {opacity: 1; transform: translateY(0);} }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid #fff;
+        }
+        h2 { font-family: 'Lobster', cursive; color: #5f27cd; text-align: center; font-size: 1.8rem; margin-top: 0; margin-bottom: 20px; }
+
+        /* ЭЛЕМЕНТЫ */
+        button {
+            background: linear-gradient(45deg, #ff9ff3, #feca57);
+            color: #fff;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            width: 100%;
+            cursor: pointer;
+            font-family: 'Comfortaa', cursive;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(254, 202, 87, 0.4);
+            margin-bottom: 10px;
+        }
+        button:hover { transform: translateY(-3px); filter: brightness(1.1); }
+        button:active { transform: scale(0.95); }
+        button.green { background: linear-gradient(45deg, #4ecdc4, #6ab04c); box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4); }
+        button.red-outline { background: transparent; border: 2px solid #ff6b6b; color: #ff6b6b; box-shadow: none; margin-top: 10px; }
+        
+        button.logout-btn {
+            background: #ff7675;
+            width: auto;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            box-shadow: none;
+            margin: 0;
+        }
+
+        button.game-select-btn {
+            background: #dfe6e9;
+            color: #636e72;
+            box-shadow: none;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+        button.game-select-btn.active {
+            background: var(--primary-red);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #dfe6e9;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Comfortaa', cursive;
+            background: #f1f2f6;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--green); background: #fff; }
+
+        /* СПЕЦИФИЧЕСКИЕ СТИЛИ */
+        .timer-box { text-align: center; background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; padding: 20px; border-radius: 20px; }
+        .timer-digits { font-size: 2.2rem; font-weight: bold; }
+
+        .task-item { display: flex; align-items: center; padding: 12px 10px; border-bottom: 2px dashed #dfe6e9; border-radius: 10px; }
+        .task-item input { width: 25px; height: 25px; margin-right: 15px; accent-color: var(--green); }
+        .progress-container { height: 24px; background: #dfe6e9; border-radius: 12px; overflow: hidden; margin: 15px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #feca57, #ff9ff3); width: 0%; transition: 0.5s; border-radius: 12px; }
+
+        /* СТИЛИ ДЛЯ ИГРЫ "ЛОВИ ПОДАРКИ" */
+        #catch-game-area { height: 300px; background: #dff9fb; border-radius: 15px; position: relative; overflow: hidden; border: 3px solid #c7ecee; display: none; }
+        .target { position: absolute; font-size: 3rem; animation: bounce 0.6s ease; user-select: none; }
+        @keyframes bounce { 0%{transform: scale(0);} 60%{transform: scale(1.1);} 100%{transform: scale(1);} }
+
+        /* СТИЛИ ДЛЯ ИГРЫ "МЕМОРИ" */
+        #memory-game-area { display: none; text-align: center; }
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+        .memory-card { 
+            background: var(--green); 
+            height: 70px; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 2rem; 
+            color: transparent; 
+            transition: 0.3s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 0 #2bad9f;
+        }
+        .memory-card.flipped { background: #fff; color: initial; transform: rotateY(180deg); box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+        .memory-card.matched { background: #ffeaa7; visibility: visible; opacity: 0.5; pointer-events: none; }
+
+        /* СТИЛИ ДЛЯ ИГРЫ "КРЕСТИКИ-НОЛИКИ" */
+        #tictac-game-area { display: none; text-align: center; }
+        .tictac-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 300px; margin: 20px auto; }
+        .tictac-cell {
+            background: #fff;
+            height: 80px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            border: 3px solid #dfe6e9;
+            box-shadow: 0 5px 0 #dfe6e9;
+        }
+        .tictac-cell:active { transform: translateY(3px); box-shadow: none; }
+
+        /* СТИЛИ ПИСЕМ */
+        .parent-letter-view {
+            background: #fffbf0;
+            border: 2px dashed #feca57;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            color: #57606f;
+            margin-bottom: 25px;
+        }
+        
+        .santa-reply-card {
+            background: #fff0f5;
+            border: 3px solid #ff9ff3;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            animation: popIn 0.5s ease;
+        }
+        .santa-reply-card::before {
+            content: '🎅 Официальный ответ';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #ff6b6b;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .santa-reply-text {
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #2c3e50;
+            margin-top: 10px;
+        }
+        @keyframes popIn { from{transform: scale(0.9); opacity:0;} to{transform: scale(1); opacity:1;} }
+
+    </style>
+</head>
+<body>
+
+    <div class="garland">
+        <div class="light"></div><div class="light"></div><div class="light"></div>
+        <div class="light"></div><div class="light"></div><div class="light"></div>
+        <div class="light"></div><div class="light"></div><div class="light"></div>
+        <div class="light"></div><div class="light"></div><div class="light"></div>
+    </div>
+
+    <header>
+        <h1 id="page-title">🎄 Главная Поляна</h1>
+    </header>
+
+    <!-- 1. ГЛАВНАЯ -->
+    <section id="home" class="section active">
+        <div class="card">
+            <h2>⏳ До Чуда осталось:</h2>
+            <div class="timer-box">
+                <div class="timer-digits" id="countdown">00:00:00</div>
+                <small style="opacity: 0.8">Дней : Часов : Минут : Секунд</small>
+            </div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div style="font-size: 6rem; line-height: 1; margin-bottom: 10px;">🎅</div>
+            <p style="font-size: 1.2rem; font-weight: bold; color: #57606f;">Привет, малыш!</p>
+            <p>Я Дед Мороз. Веди себя хорошо, и я исполню твою мечту!</p>
+        </div>
+    </section>
+
+    <!-- 2. ПИСЬМО -->
+    <section id="letter" class="section">
+        
+        <div id="santaReplyBox" style="display: none;">
+            <div class="santa-reply-card">
+                <div class="santa-reply-text" id="santaReplyTextDisplay"></div>
+                <div style="text-align: right; font-size: 2rem; margin-top: 10px;">✒️</div>
+            </div>
+        </div>
+
+        <div class="card" id="writeFormCard" style="background: #fffbf0; border-color: #f1c40f;">
+            <h2>📜 Письмо Дедушке</h2>
+            <p style="text-align: center; color: #e67e22;">Эльфы передадут мне твое письмо!</p>
+            <input type="text" id="childName" placeholder="Как тебя зовут?">
+            <input type="text" id="gift" placeholder="Твой заветный подарок 🎁">
+            <textarea id="childText" rows="5" placeholder="Напиши, как прошел год..."></textarea>
+            <button onclick="sendLetter()">Отправить письмо 🕊️</button>
+        </div>
+
+        <div id="letter-success" style="display:none; text-align: center;">
+            <div class="card">
+                <div style="font-size: 4rem;">📨</div>
+                <h3 style="color: var(--green); font-size: 2rem;">Улетело!</h3>
+                <p>Жди чуда под ёлкой.</p>
+                <button onclick="location.reload()" style="margin-top: 15px; background: #dfe6e9; color: #555;">Написать еще одно</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. ДОБРЫЕ ДЕЛА -->
+    <section id="tasks" class="section">
+        <div class="card">
+            <h2>⭐ Дневник Героя</h2>
+            <div class="progress-container">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div id="taskList"></div>
+        </div>
+    </section>
+
+    <!-- 4. ИГРОТЕКА (ОБНОВЛЕННАЯ) -->
+    <section id="game" class="section">
+        <div class="card">
+            <h2>🎮 Игротека</h2>
+            
+            <!-- Меню выбора игр -->
+            <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+                <button class="game-select-btn active" id="btn-catch" onclick="switchGame('catch')">🎁 Лови!</button>
+                <button class="game-select-btn" id="btn-memory" onclick="switchGame('memory')">🧠 Пары</button>
+                <button class="game-select-btn" id="btn-tictac" onclick="switchGame('tictac')">❌⭕ Снег</button>
+            </div>
+
+            <!-- ИГРА 1: ЛОВИ ПОДАРКИ -->
+            <div id="game-container-catch" style="display: block;">
+                <p style="text-align: center;">Поймано: <b id="score" style="color: var(--primary-red); font-size: 1.5em;">0</b></p>
+                <div id="catch-game-area" onclick="missClick(event)"></div>
+                <button class="green" onclick="startCatchGame()">Начать игру! 🕹️</button>
+            </div>
+
+            <!-- ИГРА 2: МЕМОРИ (НАЙДИ ПАРУ) -->
+            <div id="game-container-memory" style="display: none;">
+                <p style="text-align: center;">Найди все одинаковые картинки!</p>
+                <div class="memory-grid" id="memoryGrid"></div>
+                <br>
+                <button class="green" onclick="startMemoryGame()">Перемешать 🔄</button>
+            </div>
+
+            <!-- ИГРА 3: КРЕСТИКИ-НОЛИКИ -->
+            <div id="game-container-tictac" style="display: none;">
+                <p style="text-align: center;" id="tictac-status">Ходит: ⛄ Снеговик</p>
+                <div class="tictac-grid" id="tictacGrid">
+                    <!-- Ячейки генерируются JS -->
+                </div>
+                <button class="green" onclick="startTicTacGame()">Заново 🔄</button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 5. РОДИТЕЛЯМ -->
+    <section id="parents" class="section">
+        <div class="card" id="lockScreen" style="text-align: center;">
+            <h2>🔐 Только для Пап и Мам</h2>
+            <p style="font-size: 1.2rem;">5 + 7 = ?</p>
+            <input type="number" id="parentCode" placeholder="Ответ...">
+            <button onclick="checkParent()">Войти</button>
+        </div>
+
+        <div class="card" id="parentPanel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">⚙️ Кабинет</h2>
+                <button class="logout-btn" onclick="logoutParent()">🚪 Выйти</button>
+            </div>
+            
+            <p style="font-weight: bold; color: #5f27cd;">📬 Полученное письмо:</p>
+            <div id="savedLetterContainer"></div>
+
+            <hr style="border: 0; border-top: 1px solid #dfe6e9; margin: 20px 0;">
+
+            <p style="font-weight: bold; color: var(--primary-red);">🎅 Ответ от Деда Мороза:</p>
+            <p style="font-size: 0.8rem; color: #888;">Этот текст увидит ребенок в разделе "Письмо".</p>
+            <textarea id="replyInput" rows="4" placeholder="Здравствуй, малыш! Я получил твое письмо..."></textarea>
+            <button class="green" onclick="saveReply()">Отправить ответ ребенку</button>
+            <button class="red-outline" onclick="clearReply()">Очистить/Удалить ответ</button>
+
+            <hr style="border: 0; border-top: 1px solid #dfe6e9; margin: 20px 0;">
+
+            <p style="font-weight: bold; color: #5f27cd;">📝 Список дел:</p>
+            <textarea id="customTasks" rows="6"></textarea>
+            <button class="green" onclick="saveTasks()">Сохранить список</button>
+            <br><br>
+            <button onclick="resetApp()" style="background: #a4b0be; box-shadow: none;">🗑️ Сброс всего</button>
+        </div>
+    </section>
+
+    <nav class="nav-bar">
+        <div class="nav-item active" onclick="nav('home')"><span class="nav-icon">🏠</span>Дом</div>
+        <div class="nav-item" onclick="nav('letter')"><span class="nav-icon">✉️</span>Письмо</div>
+        <div class="nav-item" onclick="nav('tasks')"><span class="nav-icon">✅</span>Дела</div>
+        <div class="nav-item" onclick="nav('game')"><span class="nav-icon">🎮</span>Игра</div>
+        <div class="nav-item" onclick="nav('parents')"><span class="nav-icon">👪</span>Род.</div>
+    </nav>
+
+    <script>
+        // --- 1. НАВИГАЦИЯ ---
+        function nav(pageId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            const menuIndex = ['home', 'letter', 'tasks', 'game', 'parents'].indexOf(pageId);
+            document.querySelectorAll('.nav-item')[menuIndex].classList.add('active');
+            
+            const titles = {'home':'🎄 Главная Поляна','letter':'📮 Почта Мороза','tasks':'⭐ Дневник Героя','game':'🎮 Игротека','parents':'🔐 Для Взрослых'};
+            document.getElementById('page-title').textContent = titles[pageId];
+            window.scrollTo(0,0);
+
+            if(pageId === 'letter') checkSantaReply();
+            
+            // Если ушли со страницы игр, останавливаем игру "Лови подарки"
+            if(pageId !== 'game') {
+                 clearInterval(catchGameInterval);
+                 const area = document.getElementById('catch-game-area');
+                 area.innerHTML = '';
+                 area.style.display = 'none';
+            } else {
+                 // Если вернулись в игры, показываем текущую выбранную вкладку
+                 // по умолчанию ничего не делаем, так как состояние в DOM сохранилось
+            }
+        }
+
+        // --- 2. ТАЙМЕР ---
+        setInterval(() => {
+            const nextYear = new Date().getFullYear() + 1;
+            const diff = new Date(`Jan 1, ${nextYear} 00:00:00`) - new Date();
+            const d = Math.floor(diff / (1000*60*60*24));
+            const h = Math.floor((diff / (1000*60*60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            document.getElementById('countdown').innerText = `${d}:${h<10?'0'+h:h}:${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+        }, 1000);
+
+        // --- 3. ПИСЬМО ---
+        function sendLetter() {
+            const name = document.getElementById('childName').value;
+            const gift = document.getElementById('gift').value;
+            const text = document.getElementById('childText').value;
+
+            if(!name) return alert('Напиши имя!');
+            
+            const letterData = {
+                name: name,
+                gift: gift,
+                text: text,
+                date: new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
+            };
+            
+            localStorage.setItem('santaLetter', JSON.stringify(letterData));
+            document.querySelector('#writeFormCard').style.display = 'none';
+            document.getElementById('letter-success').style.display = 'block';
+            createSnow(50);
+        }
+
+        function checkSantaReply() {
+            const reply = localStorage.getItem('santaReply');
+            const replyBox = document.getElementById('santaReplyBox');
+            if(reply && reply.trim() !== "") {
+                replyBox.style.display = "block";
+                document.getElementById('santaReplyTextDisplay').innerText = reply;
+            } else {
+                replyBox.style.display = "none";
+            }
+        }
+
+        // --- 4. ЗАДАЧИ ---
+        let tasks = JSON.parse(localStorage.getItem('santaTasks')) || [
+            { txt: "Почистить зубки 🦷", done: false },
+            { txt: "Убрать игрушки 🧸", done: false }
+        ];
+
+        function renderTasks() {
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+            let c = 0;
+            tasks.forEach((t, i) => {
+                if(t.done) c++;
+                list.innerHTML += `<div class="task-item"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i})"><span style="${t.done?'opacity:0.5;text-decoration:line-through':''}">${t.txt}</span></div>`;
+            });
+            document.getElementById('progressBar').style.width = (Math.round((c/tasks.length)*100)||0) + '%';
+            localStorage.setItem('santaTasks', JSON.stringify(tasks));
+        }
+        function toggleTask(i) { tasks[i].done = !tasks[i].done; renderTasks(); if(tasks[i].done) createSnow(10); }
+        renderTasks();
+
+        // --- 5. РОДИТЕЛИ ---
+        function checkParent() {
+            if(document.getElementById('parentCode').value == '12') {
+                document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('parentPanel').style.display = 'block';
+                
+                document.getElementById('customTasks').value = tasks.map(t => t.txt).join('\n');
+                
+                const savedLetter = JSON.parse(localStorage.getItem('santaLetter'));
+                const letterBox = document.getElementById('savedLetterContainer');
+                
+                if (savedLetter) {
+                    letterBox.innerHTML = `
+                        <div class="parent-letter-view">
+                            <div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">${savedLetter.date}</div>
+                            <div><b>Имя:</b> ${savedLetter.name}</div>
+                            <div><b>Подарок:</b> ${savedLetter.gift}</div>
+                            <div style="margin-top:5px; font-style:italic;">"${savedLetter.text}"</div>
+                        </div>
+                    `;
+                } else {
+                    letterBox.innerHTML = `<p style="text-align:center; color:#ccc;">📭 Писем пока не поступало.</p>`;
+                }
+
+                const existingReply = localStorage.getItem('santaReply');
+                if(existingReply) document.getElementById('replyInput').value = existingReply;
+
+            } else {
+                alert('Неверно!');
+            }
+        }
+
+        function logoutParent() {
+            document.getElementById('parentPanel').style.display = 'none';
+            document.getElementById('lockScreen').style.display = 'block';
+            document.getElementById('parentCode').value = ''; 
+        }
+
+        function saveReply() {
+            const replyText = document.getElementById('replyInput').value;
+            if(replyText.trim() === "") return alert("Напишите текст ответа!");
+            localStorage.setItem('santaReply', replyText);
+            alert('Ответ сохранен! Ребенок увидит его во вкладке "Письмо".');
+        }
+
+        function clearReply() {
+            if(confirm('Удалить ответ Деда Мороза?')) {
+                localStorage.removeItem('santaReply');
+                document.getElementById('replyInput').value = "";
+                alert('Ответ удален.');
+            }
+        }
+
+        function saveTasks() {
+            const raw = document.getElementById('customTasks').value;
+            tasks = raw.split('\n').filter(l => l.trim() !== '').map(l => ({ txt: l, done: false }));
+            localStorage.setItem('santaTasks', JSON.stringify(tasks));
+            renderTasks();
+            alert('Сохранено!');
+        }
+
+        function resetApp() { if(confirm('Сбросить всё?')) { localStorage.clear(); location.reload(); } }
+
+        // ==========================================
+        // --- 6. ЛОГИКА ИГР (НОВАЯ) ---
+        // ==========================================
+
+        // ПЕРЕКЛЮЧАТЕЛЬ ИГР
+        function switchGame(gameType) {
+            // Останавливаем "Лови подарки"
+            clearInterval(catchGameInterval);
+            document.getElementById('catch-game-area').style.display = 'none';
+            
+            // Скрываем все контейнеры
+            document.getElementById('game-container-catch').style.display = 'none';
+            document.getElementById('game-container-memory').style.display = 'none';
+            document.getElementById('game-container-tictac').style.display = 'none';
+
+            // Убираем активность кнопок
+            document.querySelectorAll('.game-select-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-'+gameType).classList.add('active');
+
+            // Показываем нужную игру
+            if (gameType === 'catch') {
+                document.getElementById('game-container-catch').style.display = 'block';
+            } else if (gameType === 'memory') {
+                document.getElementById('game-container-memory').style.display = 'block';
+                startMemoryGame();
+            } else if (gameType === 'tictac') {
+                document.getElementById('game-container-tictac').style.display = 'block';
+                startTicTacGame();
+            }
+        }
+
+        // --- ИГРА 1: ЛОВИ ПОДАРКИ ---
+        let score=0, catchGameInterval;
+        function startCatchGame() {
+            score=0; document.getElementById('score').innerText=0;
+            const area = document.getElementById('catch-game-area'); 
+            area.style.display = 'block';
+            area.innerHTML='';
+            clearInterval(catchGameInterval);
+            catchGameInterval = setInterval(()=>{
+                const t = document.createElement('div');
+                t.className='target'; t.innerText=['🎁','🍊','⛄'][Math.floor(Math.random()*3)];
+                t.style.left=Math.random()*(area.clientWidth-50)+'px';
+                t.style.top=Math.random()*(area.clientHeight-50)+'px';
+                t.onclick=(e)=>{ e.stopPropagation(); score++; document.getElementById('score').innerText=score; t.remove(); };
+                area.appendChild(t); setTimeout(()=>t.remove(), 1500);
+            }, 800);
+        }
+        function missClick(e) {}
+
+        // --- ИГРА 2: МЕМОРИ (НАЙДИ ПАРУ) ---
+        const memoryIcons = ['🎅','🎅','🦌','🦌','🎁','🎁','🎄','🎄','❄️','❄️','⛄','⛄','🍪','🍪','🔔','🔔'];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function startMemoryGame() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            
+            // Перемешиваем
+            const shuffled = memoryIcons.sort(() => 0.5 - Math.random());
+            
+            shuffled.forEach((icon, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.icon = icon;
+                card.onclick = () => flipCard(card);
+                
+                // Внутренняя часть для анимации
+                card.innerHTML = `<span style="transform: rotateY(180deg);">${icon}</span>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                flippedCards.push(card);
+                
+                if (flippedCards.length === 2) {
+                    checkMatch();
+                }
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.icon === card2.dataset.icon) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                flippedCards = [];
+                if(matchedPairs === 8) {
+                    setTimeout(() => { alert("Ты нашел все пары! Молодец! 🎉"); createSnow(30); }, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                }, 800);
+            }
+        }
+
+        // --- ИГРА 3: КРЕСТИКИ-НОЛИКИ (СНЕГОВИК VS ОЛЕНЬ) ---
+        let boardState = Array(9).fill(null);
+        let currentPlayer = '⛄'; // Снеговик ходит первым
+        let gameActive = true;
+
+        function startTicTacGame() {
+            boardState = Array(9).fill(null);
+            currentPlayer = '⛄';
+            gameActive = true;
+            document.getElementById('tictac-status').innerText = 'Ходит: ⛄ Снеговик';
+            const grid = document.getElementById('tictacGrid');
+            grid.innerHTML = '';
+            
+            for(let i=0; i<9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'tictac-cell';
+                cell.onclick = () => handleTicTacClick(cell, i);
+                grid.appendChild(cell);
+            }
+        }
+
+        function handleTicTacClick(cell, index) {
+            if (!gameActive || boardState[index]) return;
+
+            boardState[index] = currentPlayer;
+            cell.innerText = currentPlayer;
+            
+            if (checkWin()) {
+                document.getElementById('tictac-status').innerText = `Победил ${currentPlayer}! 🎉`;
+                gameActive = false;
+                createSnow(20);
+                return;
+            }
+
+            if (!boardState.includes(null)) {
+                document.getElementById('tictac-status').innerText = 'Ничья! 🤝';
+                gameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === '⛄' ? '🦌' : '⛄';
+            document.getElementById('tictac-status').innerText = `Ходит: ${currentPlayer} ${currentPlayer === '⛄' ? 'Снеговик' : 'Олень'}`;
+        }
+
+        function checkWin() {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return wins.some(combo => {
+                return boardState[combo[0]] && 
+                       boardState[combo[0]] === boardState[combo[1]] && 
+                       boardState[combo[0]] === boardState[combo[2]];
+            });
+        }
+
+        // --- СНЕГ ---
+        function createSnow(n) {
+            for(let i=0; i<n; i++){
+                const s = document.createElement('div'); s.className='snowflake';
+                s.innerText='❄'; s.style.left=Math.random()*100+'vw';
+                s.style.fontSize=(Math.random()*1.5+1)+'em';
+                s.style.animationDuration=(Math.random()*3+3)+'s';
+                document.body.appendChild(s); setTimeout(()=>s.remove(), 6000);
+            }
+        }
+        setInterval(()=>createSnow(1), 500);
+
+        checkSantaReply();
+    </script>
+</body>
+</html>
